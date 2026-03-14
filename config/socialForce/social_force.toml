@@ -1,0 +1,22 @@
+title = "Social Force Config File"
+
+[scene]
+enable_group = false
+agent_radius = 0.5
+step_width = 0.1
+max_speed_multiplier = 2
+max_normal_speed_multiplier = 1.2
+tau = 0.5
+resolution = 10
+
+[desired_force]
+factor = 1.0
+goal_threshold = 0.2
+relaxation_time = 0.5
+
+[social_force]
+factor = 5.0
+lambda_importance = 1.0
+gamma = 0.35
+n = 2
+n_prime = 3

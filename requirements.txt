@@ -1,0 +1,17 @@
+simple-pid
+pyyaml
+mavsdk==2.8.4
+opencv-python
+tensorflow==2.18.0
+transforms3d
+scipy
+deprecated
+ultralytics
+scikit-image
+filterpy
+pandas
+yacs
+lap
+pysocialforce
+tqdm
+numpy<2

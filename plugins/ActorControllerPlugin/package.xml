@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>gazebo_sim_actor_plugin</name>
+  <version>0.1.0</version>
+  <description>A Gazebo Sim (Harmonic) actor plugin that takes Twist commands from ROS 2 and controls UAV follow-me.</description>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- Dependencies for Gazebo Sim -->
+  <depend>gz-cmake3</depend>
+  <depend>gz-sim8</depend>
+  <depend>gz-transport12</depend>
+
+  <!-- ROS 2 Dependencies -->
+  <depend>rclcpp</depend>
+  <depend>geometry_msgs</depend>
+
+  <!-- MAVSDK Dependencies -->
+  <depend>libmavsdk-dev</depend>
+
+  <depend>std_msgs</depend>
+  
+  <build_depend>rclcpp</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>std_msgs</build_depend>
+
+  <exec_depend>rclcpp</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>libmavsdk-dev</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+
+  <!-- Testing dependencies -->
+  <test_depend>ament_lint_auto</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

@@ -1,0 +1,6 @@
+[submodule "onboard/SiamMask"]
+	path = onboard/SiamMask
+	url = https://github.com/foolwood/SiamMask
+[submodule "onboard/pysot"]
+	path = onboard/pysot
+	url = https://github.com/STVIR/pysot.git

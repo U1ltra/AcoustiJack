@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>gazebo_sim_camera_transform_plugin</name>
+  <version>0.1.0</version>
+  <description>A Gazebo Sim (Harmonic) actor plugin that takes Pose commands from ROS 2.</description>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- Dependencies for Gazebo Sim -->
+  <depend>gz-cmake3</depend>
+  <depend>gz-sim8</depend>
+  <depend>gz-transport12</depend>
+  <depend>std_msgs</depend>
+
+  <depend>pybind11_vendor</depend>
+  <depend>python3-dev</depend>
+
+  <!-- ROS 2 Dependencies -->
+  <depend>rclcpp</depend>
+  <depend>geometry_msgs</depend>
+  <build_depend>rclcpp</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>std_msgs</build_depend>
+
+  <exec_depend>rclcpp</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+
+  <!-- Testing dependencies -->
+  <test_depend>ament_lint_auto</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
