@@ -1,11 +1,8 @@
-**Claim 2: The attack demonstrates stable success across two commercial gimbal camera systems, each exhibiting distinct acoustic vulnerabilities as discussed in Section 5.1.**
+**Claim 2: The attack demonstrates generalizability with stable success across two commercial gimbal camera systems, each exhibiting distinct acoustic vulnerabilities as discussed in Section 5.1.**
 
 The script should take about 8h to complete (4h for each 54 trials) with an NVIDIA GPU. GPU is not required but it will be slower without it.
 
-We selectively run experiments on DaSiamRPN (appearance-based) and UCMCTrack (motion-based), which have 
-
-We select a appearance-based and motion-based trackers (DaSiamRPN, and UCMCTrack) with higher tracking robustness in comparison 
-to to demonstrate the stable success of our attack even when
+These experiments are configured with acoustic vulnerability physically profiled from *MidEndDrone*. We selectively run experiments on DaSiamRPN (appearance-based) and UCMCTrack (motion-based), which are designed robustness against visual distractors and camera motions. This demonstrates the generalizability of our attack.
 
 Running claim2.sh should generate another set of experiment logs under /root/exp. The configurations are already set to align with the *MidEndDrone* column in **Table 1**. To obtain the evaluation metric for each of the tracking algorithm, 
 1) fill the *exp_names* list with the newly generated trace names in /root/exp

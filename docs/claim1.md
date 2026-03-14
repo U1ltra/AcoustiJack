@@ -2,7 +2,7 @@
 
 The script should take about 16h to complete (4h for each 54 trials) with an NVIDIA GPU. GPU is not required but it will be slower without it.
 
-We select only the pedestrian case due to the overhead. It should be enough to support the claim given that it is the main application scenario for UAV object tracking. We also select four representitve algorithms, appearance-based (SiamRPN, DaSiamRPN) and two motion-based (SORT, UCMCTrack).
+These experiments are configured with acoustic vulnerability physically profiled from *HighEndDrone*. We select only the pedestrian case due to the overhead. It should be enough to support the claim given that it is the main application scenario for UAV object tracking. We also select four representitve algorithms, appearance-based (SiamRPN, DaSiamRPN) and two motion-based (SORT, UCMCTrack).
 
 Running claim1.sh should generate a set of experiment logs under /root/exp. The configurations are already set to align with the *HighEndDrone* column in **Table 1**.
 To obtain the evaluation metric for each of the tracking algorithm, 
