@@ -2,7 +2,7 @@
 # setup_env.sh — Prepare Gazebo plugins, models, and worlds for UAV attack simulations
 # Usage: source setup_env.sh
 
-REPO_ROOT="/root/uav-attacks"
+REPO_ROOT="/root/AcoustiJack"
 PLUGINS_DIR="$REPO_ROOT/plugins"
 OBJECTS_DIR="$REPO_ROOT/config/objects"
 WORLDS_DIR="$REPO_ROOT/config/worlds"
@@ -51,7 +51,7 @@ pip install -e . \
     || { echo "ERROR: Failed to install PySocialForce"; return 1; }
 cd ..
 
-cd /root/uav-attacks
+cd /root/AcoustiJack
 mkdir -p /tmp/fake_cuda/nvvm/libdevice
 ln -sf /acoustiJack/lib/python3.12/site-packages/triton/backends/nvidia/lib/libdevice.10.bc /tmp/fake_cuda/nvvm/libdevice/libdevice.10.bc
 export XLA_FLAGS=--xla_gpu_cuda_data_dir=/tmp/fake_cuda

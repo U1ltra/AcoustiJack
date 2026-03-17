@@ -157,7 +157,7 @@ def parse_args():
     parser.add_argument(
         "--code_dir",
         type=str,
-        default="~/uav-attacks",
+        default="~/AcoustiJack",
         help="Path to the code directory",
     )
     parser.add_argument(

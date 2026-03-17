@@ -31,12 +31,12 @@ class TrackerConfig:
     det_conf_threshold: float = 0.3
     verbose: bool = False
     # SiamRPN params
-    siamrpn_model: str = "/root/uav-attacks/onboard/models/siamrpn_alex_dwxcorr/model.pth"
-    siamrpn_config: str = "/root/uav-attacks/onboard/models/siamrpn_alex_dwxcorr/config.yaml"
+    siamrpn_model: str = "/root/AcoustiJack/onboard/models/siamrpn_alex_dwxcorr/model.pth"
+    siamrpn_config: str = "/root/AcoustiJack/onboard/models/siamrpn_alex_dwxcorr/config.yaml"
     # KCF params
     kcf_executable: str = "./kcf-master/build/kcf_vot"
     # DaSiamRPN params
-    dasiamrpn_model: str = "/root/uav-attacks/onboard/models/SiamRPNBIG.model"
+    dasiamrpn_model: str = "/root/AcoustiJack/onboard/models/SiamRPNBIG.model"
     # UCMCTrack params
     wx: float = 5.0 # motion uncertainty in x-direction
     wy: float = 5.0 # motion uncertainty in y-direction
