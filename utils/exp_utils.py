@@ -563,22 +563,29 @@ def launch_scripts(args, trial_configs, trial_index):
     env["GZ_IP"] = "127.0.0.1"
     env["HEADLESS"] = "1"
     env["PX4_GZ_WORLD"] = args.world_file
-    env["PX4_SYS_AUTOSTART"] = "4002"
     env["PX4_GZ_MODEL_POSE"] = f"{trial_configs['UAV_poses'][trial_index][0]},{trial_configs['UAV_poses'][trial_index][1]},{trial_configs['UAV_poses'][trial_index][2]},{trial_configs['UAV_poses'][trial_index][3]},{trial_configs['UAV_poses'][trial_index][4]},{trial_configs['UAV_poses'][trial_index][5]}"
-    env["PX4_SIM_MODEL"] = f"x500_gimbal"
-    command = [
-        "/root/PX4-Autopilot/build/px4_sitl_default/bin/px4",
-    ]
-    print("PX4 command: GZ_IP=127.0.0.1 HEADLESS=1 PX4_GZ_WORLD={} PX4_SYS_AUTOSTART=4002 PX4_GZ_MODEL_POSE=\"{}\" PX4_SIM_MODEL=x500_gimbal {}".format(
-        env["PX4_GZ_WORLD"],
-        env["PX4_GZ_MODEL_POSE"],
-        " ".join(command),
-    ))
+    
+    # Let the make target choose the right model/autostart pairing.
+    # If you set PX4_SIM_MODEL manually here, use gz_x500_gimbal, not x500_gimbal.
+    env.pop("PX4_SYS_AUTOSTART", None)
+    env.pop("PX4_SIM_MODEL", None)
+    
+    command = ["make", "px4_sitl", "gz_x500_gimbal"]
+
+    print(
+        "PX4 command:",
+        f"GZ_IP={env['GZ_IP']} "
+        f"HEADLESS={env['HEADLESS']} "
+        f"PX4_GZ_WORLD={env['PX4_GZ_WORLD']} "
+        f"PX4_GZ_MODEL_POSE=\"{env['PX4_GZ_MODEL_POSE']}\" "
+        + " ".join(command)
+    )
     px4_process = subprocess.Popen(
         command,
+        cwd="/root/PX4-Autopilot",
         env=env,
         stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
         text=True,
         bufsize=1,
     )
@@ -657,7 +664,7 @@ def launch_scripts(args, trial_configs, trial_index):
         command,
         env=env,
         stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
         text=True,
         bufsize=1,
     )

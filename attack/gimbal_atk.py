@@ -1125,7 +1125,7 @@ class AttackManager(Node):
 
         # Initialize node
         self.log("Initialized")
-        time.sleep(5)  # Wait for everything to be ready
+        time.sleep(10)  # Wait for everything to be ready
 
         # Send start signal
         # self.start_pub.publish(Bool(data=True))
