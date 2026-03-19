@@ -4,3 +4,6 @@
 [submodule "onboard/pysot"]
 	path = onboard/pysot
 	url = https://github.com/STVIR/pysot.git
+[submodule "gz-px4-ros2-docker"]
+	path = gz-px4-ros2-docker
+	url = https://github.com/U1ltra/gz-sim-docker
