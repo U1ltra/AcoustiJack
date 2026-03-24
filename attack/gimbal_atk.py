@@ -1391,6 +1391,9 @@ class AttackManager(Node):
             if sim_time_passed < 0.010:
                 self.log(f"Skipping frame {self.frame_num} due to small time difference")
                 return
+            sim_time_to_move = sim_time - self.current_time_img[1]
+        else:
+            sim_time_to_move = 0.0
         self.current_time_img = [ros_time, sim_time]
         
         if len(self.vic_pose_history) == 0:
@@ -1401,7 +1404,7 @@ class AttackManager(Node):
             self.start_pub_atk.publish(Bool(data=True))
             atker_pose = self.victim_vehicle.attacker_pose_msg(
                 self.main_camera.pose_wo_noise_history[-1], self.vic_pose_history[-1], self.atk_pose_history[-1], dist=self.atker_dist, victim_velocity=self.victim_velocity,
-                angle=self.atker_angle, motion_model=self.attack_started, sim_time_to_move=(sim_time - self.current_time_img[1])
+                angle=self.atker_angle, motion_model=self.attack_started, sim_time_to_move=sim_time_to_move
             )
             # print(f"Moving attacker to position: {atker_pose.pose.position.x:.2f}, {atker_pose.pose.position.y:.2f}, {atker_pose.pose.position.z:.2f}")
             self.atk_pose_pub.publish(atker_pose) # attacker move to vulnerable position
