@@ -46,7 +46,10 @@ if python3 -c "import pysocialforce" &> /dev/null; then
 else
     echo "  pysocialforce not found, skipping uninstall."
 fi
-git clone https://github.com/U1ltra/PySocialForce.git
+if [ ! -d "PySocialForce" ]; then
+    git clone https://github.com/U1ltra/PySocialForce.git \
+        || { echo "ERROR: Failed to clone PySocialForce"; exit 1; }
+fi
 cd PySocialForce
 pip install -e . \
     || { echo "ERROR: Failed to install PySocialForce"; exit 1; }

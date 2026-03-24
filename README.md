@@ -41,7 +41,7 @@ In the docker container
 cd ~
 git clone https://github.com/U1ltra/AcoustiJack/
 cd AcoustiJack
-source setup_env.sh
+bash install.sh
 ```
 
 ## Reproduction
@@ -60,5 +60,6 @@ To validate claim 2, refer to docs/claim2.md and run the following command
 bash bash/claim2.sh
 ```
 
-
+## Known Issues
+- `bash install.sh` may fail when building the plugins. Simplely rerun can fit it.
 
