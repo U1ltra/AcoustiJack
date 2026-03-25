@@ -54,5 +54,10 @@ bash bash/claim2.sh
 ```
 
 ## Known Issues
-- `bash install.sh` may fail when building the plugins. Simplely rerun can fit it.
-- Rarely, when you test PX4 and Gazebo setup, it may stuck at `INFO  [init] Waiting for Gazebo world...` for a noticably long time. Our experience is that it eventually goes through after waiting (1-3 mins) or rerun. 
+- **Intermittent build failures during installation**. Running `bash install.sh` may occasionally fail when building certain plugins. This appears to be non-deterministic (e.g., due to transient build or dependency issues). In our experience, simply rerunning the installation script resolves the problem.
+- **Occasional delay during PX4–Gazebo initialization**. During startup, the system may appear to stall at `INFO [init] Waiting for Gazebo world...` for an extended period. In most cases, the process proceeds successfully after waiting (typically 1–3 minutes). If the delay persists, rerunning the setup usually resolves the issue.
+- **System-level sensitivity and instability**. Our system involves tight coupling between multiple components, including the Gazebo simulator, PX4-Autopilot, ROS 2, and supporting Python scripts. As a result, execution can be sensitive to system configuration (e.g., compute resources, GPU drivers), which may manifest in several ways:
+  - **Performance variability**. On machines with limited resources, the simulator may run slower than real time, introducing timing inconsistencies across components (e.g., delayed message passing). This can lead to variations in experimental results, though we do not expect it to affect the overall conclusions.
+  - **Occasional integration instability**. The cross-component interaction may intermittently lead to failures in specific operations (e.g., the takeoff command), causing an individual experiment trial to fail. Based on our observations, this behavior arises from the integration of underlying open-source systems rather than the attack pipeline itself. In such cases, users can rerun the affected trial using the `--only_run` option in `launch.py`.
+  - **Rare runtime crashes**. In a small number of environments, we observed occasional crashes during execution, which we attribute to GPU hardware or driver compatibility issues based on our diagnosis. To prevent data loss, we recommend mounting /root/exp in the Docker container as a shared directory with the host machine following the `README.md` instructions, so that logs are preserved in case of unexpected termination.
+
