@@ -275,6 +275,9 @@ if __name__ == "__main__":
         elif args.claim == 0:
             eval_exps.append(exp_name)
 
+    trackers = ["siamr", "dasiam", "sort", "ucmc", "kcf"]
+    tracker_results = {tracker: {"success": 0, "dos": 0, "total": 0} for tracker in trackers}
+
     for exp_name in eval_exps:
         print(f"Processing experiment: {exp_name}")
         exp_path = os.path.join(result_path, exp_name)
@@ -283,6 +286,7 @@ if __name__ == "__main__":
         dos_count = 0
         skip_count = 0
         suc_trials = []
+        longest_streaks = []
 
         for trial_num in tqdm(range(len(dirs) - 1)):
             # print(f"Processing trial {trial_num + 1}/{len(dirs) - 1}")
@@ -312,7 +316,9 @@ if __name__ == "__main__":
                             suc_trials.append((trial_num + 1, i, 0.0))
                 else:
                     current_streak = 0
-            
+
+            longest_streaks.append(max_streak)
+
             trial_settings = sim_state.get_settings_for_trial(trial_num + 1)
 
             try:
@@ -340,7 +346,13 @@ if __name__ == "__main__":
                     if not success_flag:
                         dos_count += 1
 
-        print(
-            f"Success rate: {success / (len(dirs) - 1 - skip_count):.2f}, ",
-            f"DoS rate: {dos_count / (len(dirs) - 1 - skip_count):.2f}\n",
-        )
+        for tracker in trackers:
+            if tracker in exp_name:
+                tracker_results[tracker]["success"] += sum([1 for streak in longest_streaks if streak >= 10])  # consider it a success if there's a streak of at least 5 frames
+                tracker_results[tracker]["dos"] += dos_count
+                tracker_results[tracker]["total"] += (len(dirs) - 1 - skip_count)
+    print("Tracker performance summary:")
+    for tracker, results in tracker_results.items():
+        success_rate = results["success"] / results["total"] if results["total"] > 0 else 0
+        dos_rate = results["dos"] / results["total"] if results["total"] > 0 else 0
+        print(f"{tracker}: Success rate: {success_rate:.2f}, DoS rate: {dos_rate:.2f}")
