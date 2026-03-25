@@ -1613,7 +1613,7 @@ class AttackManager(Node):
                     self.gz_gimbal_controller.start_motion()
                     self.last_optimize_frame = self.frame_num
                     self.execution_frame_left = self.victim_vehicle.config.frames_per_interval
-                    self.check_suc = 3
+                    self.check_suc = 1
 
                 except Exception as e:
                     # raise e
