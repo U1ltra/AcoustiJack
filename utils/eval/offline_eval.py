@@ -353,6 +353,8 @@ if __name__ == "__main__":
                 tracker_results[tracker]["total"] += (len(dirs) - 1 - skip_count)
     print("Tracker performance summary:")
     for tracker, results in tracker_results.items():
+        if results["total"] == 0:
+            continue
         success_rate = results["success"] / results["total"] if results["total"] > 0 else 0
         dos_rate = results["dos"] / results["total"] if results["total"] > 0 else 0
         print(f"{tracker}: Success rate: {success_rate:.2f}, DoS rate: {dos_rate:.2f}")

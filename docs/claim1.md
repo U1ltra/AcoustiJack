@@ -21,3 +21,13 @@ The scaled-down experiment should take about *~3h* to complete with an NVIDIA GP
 1. Run `bash bash/claim1.sh`.
 2. Run `python utils/eval/offline_eval.py --claim 1`
 3. Inspect the printed results from the terminal
+
+---
+**Results on Our Machine**
+
+We report the results produced on our machine by going through the exact same evaluation process
+
+    $ python utils/eval/offline_eval.py --result_path <path> --claim 1
+
+    dasiam: Success rate: 0.94, DoS rate: 0.06
+    ucmc: Success rate: 0.78, DoS rate: 0.11
