@@ -49,7 +49,7 @@ def parse_args():
         "--gim_max_speed",
         type=float,
         nargs=3,
-        default=[0.1, 2.0, 2.0],
+        default=[0.1, 0.1, 2.0],
         help="Gimbal maximum speed (injected by the acoustic signal) in pitch, roll, yaw (rad/s)",
     )
     parser.add_argument(

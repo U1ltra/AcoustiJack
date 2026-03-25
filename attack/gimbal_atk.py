@@ -223,6 +223,8 @@ class SimStates(TrackerBase):
         )
         self.config.omega_max = np.array(kwargs.get("gim_max_speed", [1.0, 1.0, 2.0]), dtype=np.float32)  # gimbal max speed in pitch, roll, yaw (rad/s)
         self.config.omega_max_norm = np.linalg.norm(self.config.omega_max)
+        if self.surrogate_model == "UCMCTrack":
+            self.config.w5 = 1.0
             
         if surrogate_model == "SORT":
 
@@ -1341,10 +1343,14 @@ class AttackManager(Node):
                 self.switched = True
                 self.switch_frame = self.frame_num
                 self.start_pub_atk.publish(Bool(data=False))
+            else:
+                if self.frame_num - self.switch_frame > 10:
+                    print(f"Hijacking maintained for {self.frame_num - self.switch_frame} frames, stopping simulation")
+                    self.stop_ros_node()
             return True
         if self.switched:
             self.log(f"Hijacking lost at frame {self.frame_num}")
-            if self.frame_num - self.switch_frame > 30: 
+            if self.frame_num - self.switch_frame > 10: 
                 self.stop_ros_node()
             self.switched = False
             self.switch_frame = -1

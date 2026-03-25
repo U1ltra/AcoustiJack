@@ -267,13 +267,11 @@ def select_motion_model_setting(file_path, gim_max_speed):
     with open(file_path, 'r') as f:
         content = f.read()
 
-    if list(gim_max_speed) == [0.1, 2.0, 2.0]:
+    if list(gim_max_speed) == [0.1, 0.1, 2.0]:
         new_init_body = (
-            "        self.resonant_freqs = [7744.0, 7746.0, 23231.0]  # Hz\n"
-            "        self.aliased_frequencies = [1.0273, 4.9739, 2.0332]  # Hz\n"
+            "        self.resonant_freqs = [23231.0]  # Hz\n"
+            "        self.aliased_frequencies = [2.0332]  # Hz\n"
             "        self.velocity_amplitudes = [  # roll, pitch, yaw for each resonant frequency\n"
-            "        [math.radians(3.8690), math.radians(17.1677), math.radians(87.2845)],\n"
-            "        [math.radians(4.5054), math.radians(12.1534), math.radians(92.8463)],\n"
             "        [math.radians(2.0032), math.radians(15.6742), math.radians(134.5029)],\n"
             "        ]\n"
             "        # self.resonant_freqs = [30000.0]  # Hz\n"
@@ -285,11 +283,9 @@ def select_motion_model_setting(file_path, gim_max_speed):
         print("Selected motion model setting 1 (gim_max_speed=[0.1, 2.0, 2.0])")
     elif list(gim_max_speed) == [1.0, 4.0, 1.0]:
         new_init_body = (
-            "        # self.resonant_freqs = [7744.0, 7746.0, 23231.0]  # Hz\n"
-            "        # self.aliased_frequencies = [1.0273, 4.9739, 2.0332]  # Hz\n"
+            "        # self.resonant_freqs = [23231.0]  # Hz\n"
+            "        # self.aliased_frequencies = [2.0332]  # Hz\n"
             "        # self.velocity_amplitudes = [  # roll, pitch, yaw for each resonant frequency\n"
-            "        #     [math.radians(3.8690), math.radians(17.1677), math.radians(87.2845)],\n"
-            "        #     [math.radians(4.5054), math.radians(12.1534), math.radians(92.8463)],\n"
             "        #     [math.radians(2.0032), math.radians(15.6742), math.radians(134.5029)],\n"
             "        # ]\n"
             "\n"

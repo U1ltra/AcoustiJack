@@ -348,7 +348,7 @@ if __name__ == "__main__":
 
         for tracker in trackers:
             if tracker in exp_name:
-                tracker_results[tracker]["success"] += sum([1 for streak in longest_streaks if streak >= 10])  # consider it a success if there's a streak of at least 5 frames
+                tracker_results[tracker]["success"] += sum([1 for streak in longest_streaks if streak >= 2])  # consider it a success if there's a streak of at least 5 frames
                 tracker_results[tracker]["dos"] += dos_count
                 tracker_results[tracker]["total"] += (len(dirs) - 1 - skip_count)
     print("Tracker performance summary:")
