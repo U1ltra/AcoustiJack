@@ -13,7 +13,7 @@ To limit evaluation overhead, we prepared the selectively scaled-down experiment
 1. A outdoor (*field*) pedestrian scenario only, which is the representitive application scenario for UAV tracking. Real-world uncertainties including motion uncertainties (e.g. target speed and direction, flight disturbances), object appearance variations, environmental changes are still varied across the trials. 
 2. Only *DaSiamRPN* (appearance-aware) and *UCMCTrack* (motion-based) algorithms to account for different tracking algorithm types.
 
-The scaled-down experiment should take about *~2.5h* to complete with an NVIDIA GPU. GPU is not required but it will be slower without it.
+The scaled-down experiment should take about *~3h* to complete with an NVIDIA GPU. GPU is not required but it will be slower without it.
 
 ---
 **Launch Evaluation**
