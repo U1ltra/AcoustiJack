@@ -2,7 +2,7 @@
 
 ## Installation
 
-Pull our docker image with all necessary environment
+Pull our docker image with all necessary environment directly or build from the Dockerfile within the submodule `gz-px4-ros2-docker`. 
 
 ```bash
 docker pull jiaruili0000/acoustijack:v1
