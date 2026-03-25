@@ -144,7 +144,7 @@ class GzGimbalController:
         )
 
         # Allow time for publishers to initialize
-        time.sleep(5.0)
+        time.sleep(3.0)
 
         # After publisher established, initialize gimbal angles
         init = Double()

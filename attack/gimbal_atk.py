@@ -84,7 +84,7 @@ class TrackerBase:
         if not attack_started:
             return
 
-        noise_3d = np.random.normal(0, 0.5, 2)
+        noise_3d = np.random.normal(0, 0.1, 2)
         for obj_id in self.object_ids:
             # Apply noise to x,y position
             self.current_det[obj_id]["3d"]["position"][0] += noise_3d[0]
@@ -1061,6 +1061,7 @@ class AttackManager(Node):
         self.switch_frame = -1  # frame when the attack switched to the attacker
         self.dist_to_success = -1.0  # distance to success
         self.sort_init_buffer = 20 # number of frames to wait for SORT to initialize
+        self.check_suc = 0 # number of frames to check for success after attack execution
         
         self.atk_duration = atk_duration
         self.fps = kwargs.get("fps", 30)
@@ -1125,7 +1126,7 @@ class AttackManager(Node):
 
         # Initialize node
         self.log("Initialized")
-        time.sleep(10)  # Wait for everything to be ready
+        time.sleep(5)  # Wait for everything to be ready
 
         # Send start signal
         # self.start_pub.publish(Bool(data=True))
@@ -1315,7 +1316,7 @@ class AttackManager(Node):
             return False, det2d, None
         return True, det2d, det3d
 
-    def check_switch(self, pred_box, atk_box, vic_w_conf):
+    def check_switch(self, pred_box, atk_box, vic_box, vic_w_conf):
         if pred_box[0] is None or atk_box[0] is None: # pred_box[0] can be None when using SORT
             self.log(f"Predicted box or attack box is None at frame {self.frame_num}")
             if self.switched:
@@ -1327,12 +1328,14 @@ class AttackManager(Node):
             return False
         
         iou = get_iou(np.array([pred_box]), np.array([atk_box]))
+        iou_vic = get_iou(np.array([pred_box]), np.array([vic_box]))
         
         pred_center = np.array([(pred_box[0] + pred_box[2]) / 2, (pred_box[1] + pred_box[3]) / 2])
         atk_center = np.array([(atk_box[0] + atk_box[2]) / 2, (atk_box[1] + atk_box[3]) / 2])
         self.dist_to_success = np.linalg.norm(pred_center - atk_center)
         # if self.dist_to_success < 40:  # 40 pixels
-        if iou[0] > 0.4:
+        self.log(f"Frame {self.frame_num} | IoU: {iou[0]:.2f} | IoU vic: {iou_vic[0]:.2f} | Distance to success: {self.dist_to_success:.2f} pixels | Victim confidence: {vic_w_conf}")
+        if iou[0] > 0.3 and iou[0] > iou_vic[0]:  # attack box overlaps with predicted box and has higher IoU than victim box
             if not self.switched:
                 self.log(f"Hijacking successful at frame {self.frame_num}")
                 self.switched = True
@@ -1341,7 +1344,7 @@ class AttackManager(Node):
             return True
         if self.switched:
             self.log(f"Hijacking lost at frame {self.frame_num}")
-            if self.frame_num - self.switch_frame > 4: 
+            if self.frame_num - self.switch_frame > 30: 
                 self.stop_ros_node()
             self.switched = False
             self.switch_frame = -1
@@ -1492,7 +1495,11 @@ class AttackManager(Node):
                     all_pred_trks_labels.append(f"id {int(box[4])}")
             boxes = boxes + all_pred_trks_boxes
             labels = labels + all_pred_trks_labels
-            
+        
+        atk_box = self.victim_vehicle.get_bbox_from_detection("attacker", source="3d", box_format="x1y1x2y2")
+        vic_box = self.victim_vehicle.get_bbox_from_detection("victim", source="3d", box_format="x1y1x2y2")
+        boxes.extend([vic_box, atk_box])
+        labels.extend(["vic gt", "atk gt"])
 
         self.image_processor.save_track_image(
             img,
@@ -1566,7 +1573,8 @@ class AttackManager(Node):
             pred_box = self.victim_vehicle.pred_history[self.name2id["victim"]][-1]
             vic_w_conf = self.victim_vehicle.pred_w_conf_history[self.name2id["victim"]][-1]
             atk_box = self.victim_vehicle.get_bbox_from_detection("attacker", source="3d", box_format="x1y1x2y2")
-            self.check_switch(pred_box, atk_box, vic_w_conf)
+            vic_box = self.victim_vehicle.get_bbox_from_detection("victim", source="3d", box_format="x1y1x2y2")
+            self.check_switch(pred_box, atk_box, vic_box, vic_w_conf)
                 
             # continue followme during the attack
             if self.victim_vehicle.pred_w_conf_history[self.name2id["victim"]][-1][4] > 0.5:
@@ -1578,7 +1586,7 @@ class AttackManager(Node):
                 self.vic_followme_pub.publish(followme_msg)
                 self.log("Victim lost confidence in tracking, stopping follow-me")
                     
-            if self.execution_frame_left == 0 and not self.switched:
+            if self.execution_frame_left == 0 and not self.switched and self.check_suc == 0:
                 self.log("Pausing simulation to optimize attack...")
                 self.start_pub.publish(Bool(data=False))
                 self.start_pub_atk.publish(Bool(data=False))
@@ -1605,6 +1613,7 @@ class AttackManager(Node):
                     self.gz_gimbal_controller.start_motion()
                     self.last_optimize_frame = self.frame_num
                     self.execution_frame_left = self.victim_vehicle.config.frames_per_interval
+                    self.check_suc = 3
 
                 except Exception as e:
                     # raise e
@@ -1621,6 +1630,8 @@ class AttackManager(Node):
                 # omega, malicious_camera_offset, gimbal_setpoint = self.gz_gimbal_controller.control_callback(optimal_velocity=self.optimal_omega_seq[0])
                 omega, malicious_camera_offset, gimbal_setpoint = self.gz_gimbal_controller.control_callback() # use realistic acoustic gimbal attack simulation
                 self.execution_frame_left -= 1
+            elif self.check_suc > 0:
+                self.check_suc -= 1
 
         self.main_timestamp_history.append([ros_time.nanoseconds, sim_time])
         self.malicious_camera_offset_history.append(malicious_camera_offset)
