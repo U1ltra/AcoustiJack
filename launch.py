@@ -214,6 +214,10 @@ def main():
             os.path.join(args.code_dir, "attack", "gimbal_atk.py"),
             enable_cuda=True,
         )
+    select_motion_model_setting(
+        os.path.join(args.code_dir, "attack", "profiled_motion_model.py"),
+        args.gim_max_speed,
+    )
 
     print("Starting the experiments... Time: ", time.strftime("%Y%m%d-%H%M%S"))
     for i in range(args.num_exps):

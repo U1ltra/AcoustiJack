@@ -110,14 +110,18 @@ class MotionWaveGenerator:
 
 class profiledMotionModels:
     def __init__(self):
-        self.resonant_freqs = [7744.0, 7746.0, 23231.0, 30000.0]  # Hz
-        self.aliased_frequencies = [1.0273, 4.9739, 2.0332, 4.0]  # Hz
+        self.resonant_freqs = [7744.0, 7746.0, 23231.0]  # Hz
+        self.aliased_frequencies = [1.0273, 4.9739, 2.0332]  # Hz
         self.velocity_amplitudes = [  # roll, pitch, yaw for each resonant frequency
-            [math.radians(3.8690), math.radians(17.1677), math.radians(87.2845)],
-            [math.radians(4.5054), math.radians(12.1534), math.radians(92.8463)],
-            [math.radians(2.0032), math.radians(15.6742), math.radians(134.5029)],
-            # [math.radians(2.0032), math.radians(134.5029), math.radians(15.6742)],
+        [math.radians(3.8690), math.radians(17.1677), math.radians(87.2845)],
+        [math.radians(4.5054), math.radians(12.1534), math.radians(92.8463)],
+        [math.radians(2.0032), math.radians(15.6742), math.radians(134.5029)],
         ]
+        # self.resonant_freqs = [30000.0]  # Hz
+        # self.aliased_frequencies = [4.0]  # Hz
+        # self.velocity_amplitudes = [  # roll, pitch, yaw for each resonant frequency
+        #     [math.radians(2.0032), math.radians(134.5029), math.radians(15.6742)],
+        # ]
         self.resonant_freqs = self.resonant_freqs[: len(self.velocity_amplitudes)]
         self.aliased_frequencies = self.aliased_frequencies[: len(self.velocity_amplitudes)]
         self.unit_directions = []

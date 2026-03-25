@@ -258,6 +258,64 @@ def toggle_cuda_line(file_path="attack/gimbal_atk.py", enable_cuda=True):
         f.writelines(lines)
 
 
+def select_motion_model_setting(file_path, gim_max_speed):
+    """Select the profiled motion model setting based on gim_max_speed.
+
+    gim_max_speed [0.1, 2.0, 2.0] -> setting 1 (three resonant freqs)
+    gim_max_speed [1.0, 4.0, 1.0] -> setting 2 (single resonant freq at 30 kHz)
+    """
+    with open(file_path, 'r') as f:
+        content = f.read()
+
+    if list(gim_max_speed) == [0.1, 2.0, 2.0]:
+        new_init_body = (
+            "        self.resonant_freqs = [7744.0, 7746.0, 23231.0]  # Hz\n"
+            "        self.aliased_frequencies = [1.0273, 4.9739, 2.0332]  # Hz\n"
+            "        self.velocity_amplitudes = [  # roll, pitch, yaw for each resonant frequency\n"
+            "        [math.radians(3.8690), math.radians(17.1677), math.radians(87.2845)],\n"
+            "        [math.radians(4.5054), math.radians(12.1534), math.radians(92.8463)],\n"
+            "        [math.radians(2.0032), math.radians(15.6742), math.radians(134.5029)],\n"
+            "        ]\n"
+            "        # self.resonant_freqs = [30000.0]  # Hz\n"
+            "        # self.aliased_frequencies = [4.0]  # Hz\n"
+            "        # self.velocity_amplitudes = [  # roll, pitch, yaw for each resonant frequency\n"
+            "        #     [math.radians(2.0032), math.radians(134.5029), math.radians(15.6742)],\n"
+            "        # ]\n"
+        )
+        print("Selected motion model setting 1 (gim_max_speed=[0.1, 2.0, 2.0])")
+    elif list(gim_max_speed) == [1.0, 4.0, 1.0]:
+        new_init_body = (
+            "        # self.resonant_freqs = [7744.0, 7746.0, 23231.0]  # Hz\n"
+            "        # self.aliased_frequencies = [1.0273, 4.9739, 2.0332]  # Hz\n"
+            "        # self.velocity_amplitudes = [  # roll, pitch, yaw for each resonant frequency\n"
+            "        #     [math.radians(3.8690), math.radians(17.1677), math.radians(87.2845)],\n"
+            "        #     [math.radians(4.5054), math.radians(12.1534), math.radians(92.8463)],\n"
+            "        #     [math.radians(2.0032), math.radians(15.6742), math.radians(134.5029)],\n"
+            "        # ]\n"
+            "\n"
+            "        self.resonant_freqs = [30000.0]  # Hz\n"
+            "        self.aliased_frequencies = [4.0]  # Hz\n"
+            "        self.velocity_amplitudes = [  # roll, pitch, yaw for each resonant frequency\n"
+            "            [math.radians(2.0032), math.radians(134.5029), math.radians(15.6742)],\n"
+            "        ]\n"
+        )
+        print("Selected motion model setting 2 (gim_max_speed=[1.0, 4.0, 1.0])")
+    else:
+        raise ValueError(
+            f"Unknown gim_max_speed {gim_max_speed}. "
+            "Expected [0.1, 2.0, 2.0] (setting 1) or [1.0, 4.0, 1.0] (setting 2)."
+        )
+
+    pattern = r'(    def __init__\(self\):\n).*?(?=        self\.resonant_freqs = self\.resonant_freqs\[)'
+    new_content = re.sub(pattern, r'\g<1>' + new_init_body, content, flags=re.DOTALL)
+
+    if new_content == content:
+        print("Warning: profiled_motion_model.py settings block unchanged — pattern may not have matched.")
+
+    with open(file_path, 'w') as f:
+        f.write(new_content)
+
+
 def experiment_configs(args):
     """ Generate experiment configurations that are fixed for the given scenario (world file). """
     scenario = args.world_file
