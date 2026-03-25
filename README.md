@@ -27,7 +27,15 @@ cd ~
 git clone https://github.com/U1ltra/AcoustiJack/
 cd AcoustiJack
 bash install.sh
+source env.sh
 ```
+
+Test PX4 and Gazebo setup
+```bash
+cd ~/PX4-Autopilot
+GZ_IP=127.0.0.1 PX4_GZ_WORLD=field PX4_SYS_AUTOSTART=4002 PX4_GZ_MODEL_POSE="10.0,0.0,1.0,0.0,0.0,0.0" PX4_SIM_MODEL=x500_gimbal ./build/px4_sitl_default/bin/px4
+```
+If you see `INFO  [init] Gazebo world is ready`, the key PX4-Autopilot and Gazebo environments are ready.
 
 ## Reproduction
 
@@ -47,4 +55,4 @@ bash bash/claim2.sh
 
 ## Known Issues
 - `bash install.sh` may fail when building the plugins. Simplely rerun can fit it.
-
+- Rarely, when you test PX4 and Gazebo setup, it may stuck at `INFO  [init] Waiting for Gazebo world...` for a noticably long time. Our experience is that it eventually goes through after waiting (1-3 mins) or rerun. 
