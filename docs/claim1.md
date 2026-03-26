@@ -25,7 +25,7 @@ The scaled-down experiment should take about *~3h* to complete with an NVIDIA GP
 ---
 **Results on Our Machine**
 
-We report the results produced on our machine by going through the exact same evaluation process
+We report the results produced on our machine by going through the same evaluation process
 
     $ python utils/eval/offline_eval.py --result_path <path> --claim 1
 
