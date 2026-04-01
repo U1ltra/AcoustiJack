@@ -11,23 +11,14 @@ Specific results to compare to in the manuscript
 **Evaluation Overhead**
 
 To limit evaluation overhead, we prepared the selectively scaled-down experiment as the following
-1. A outdoor (*field*) pedestrian scenario only, which is the representitive application scenario for UAV tracking. Real-world uncertainties including motion uncertainties (e.g. target speed and direction, flight disturbances), object appearance variations, environmental changes are still varied across the trials. 
-2. Only *DaSiamRPN* (appearance-aware) and *UCMCTrack* (motion-based) algorithms  to show that the attack succeeds regardless of (1) tracking algorithms types and (2) robustness-oriented design (e.g. distractor-aware or motion-compensation).
+1. Only *DaSiamRPN* (appearance-aware) and *UCMCTrack* (motion-based) algorithms  to show that the attack succeeds regardless of (1) tracking algorithms types and (2) robustness-oriented design (e.g. distractor-aware or motion-compensation).
+2. For *DaSiamRPN* (appearance-aware), we select an outdoor (*field*) pedestrian scenario only, which is the representitive application scenario for UAV tracking. Real-world uncertainties including motion uncertainties (e.g. target speed and direction, flight disturbances), object appearance variations, environmental changes are still varied across the trials. 
+3. For *UCMCTrack* (motion-based), we select an outdoor (*field*) pedestrian and car (*raceway*) scenarios to account for the diverse motion model of pedestrian and car.
 
-The scaled-down experiment should take about *~3h* to complete with an NVIDIA GPU. GPU is not required but it will be slower without it.
+The scaled-down experiment should take about *~4h* to complete with an NVIDIA GPU. GPU is not required but it will be slower without it.
 
 ---
 **Launch Evaluation**
 1. Run `bash bash/claim1.sh`.
 2. Run `python utils/eval/offline_eval.py --claim 1`
 3. Inspect the printed results from the terminal
-
----
-**Results on Our Machine**
-
-We report the results produced on our machine by going through the same evaluation process
-
-    $ python utils/eval/offline_eval.py --result_path <path> --claim 1
-
-    dasiam: Success rate: 0.94, DoS rate: 0.06
-    ucmc: Success rate: 0.78, DoS rate: 0.11
