@@ -390,4 +390,4 @@ if __name__ == "__main__":
             continue
         success_rate = results["success"] / results["total"] if results["total"] > 0 else 0
         dos_rate = results["dos"] / results["total"] if results["total"] > 0 else 0
-        print(f"{tracker}: Success rate: {success_rate:.2f}, DoS rate: {dos_rate:.2f}")
+        print(f"{tracker}: Hijack rate: {success_rate:.2f}, Track loss rate: {dos_rate:.2f}")
