@@ -1,4 +1,5 @@
 import os
+import re
 import cv2
 import pickle
 import argparse
@@ -232,23 +233,59 @@ def draw_bounding_boxes(sim_state):
     video_output_path = "debug_tracking_output.mp4"
     images_to_video(images, video_output_path, fps=5)
 
+def parse_hijacking_log(log_path):
+    """Parse log.txt and return list of (start_frame, end_frame) hijacking intervals.
+    end_frame is exclusive (the frame where hijacking was lost), or inf if never lost.
+    """
+    intervals = []
+    start = None
+    with open(log_path, 'r') as f:
+        for line in f:
+            m = re.search(r'Hijacking successful at frame (\d+)', line)
+            if m:
+                start = int(m.group(1))
+                continue
+            m = re.search(r'Hijacking lost at frame (\d+)', line)
+            if m and start is not None:
+                intervals.append((start, int(m.group(1))))
+                start = None
+    if start is not None:
+        intervals.append((start, float(70)))
+    return intervals
+
+
 def check_success(sim_state, idx):
     if idx < 0 or idx >= len(sim_state):
         return False
 
+    if not hasattr(sim_state, '_hijacking_intervals'):
+        log_path = os.path.join(sim_state.trial_path, 'log.txt')
+        if os.path.exists(log_path):
+            sim_state._hijacking_intervals = parse_hijacking_log(log_path)
+        else:
+            sim_state._hijacking_intervals = None
+
+    if sim_state._hijacking_intervals is not None:
+        return any(start <= idx < end for start, end in sim_state._hijacking_intervals)
+
+    # Fallback to frame-level detection if no log available
     frame = sim_state.get_frame(idx)
     vic_pred_uav = frame[f"{sim_state.vic_id}_pred_uav"]
     atk_det_uav = frame[f"{sim_state.atk_id}_det_uav"]
-    
-    if vic_pred_uav[0] is None or atk_det_uav[0] is None:
+    vic_det_uav = frame[f"{sim_state.vic_id}_det_uav"]
+
+    if vic_pred_uav[0] is None or atk_det_uav[0] is None or vic_det_uav[0] is None:
         return False
+
+    iou_atk = get_iou(vic_pred_uav.reshape(-1, 4), atk_det_uav.reshape(-1, 4))[0]
+    iou_vic = get_iou(vic_pred_uav.reshape(-1, 4), vic_det_uav.reshape(-1, 4))[0]
 
     atk_det_xywh = convert_bbox(atk_det_uav, "x1y1x2y2", "xywh")
     vic_x1, vic_y1, vic_x2, vic_y2 = vic_pred_uav
     atk_x, atk_y, atk_w, atk_h = atk_det_xywh
 
     # Check if the attacker's bounding box overlaps with the victim's predicted bounding box
-    if atk_x >= vic_x1 and atk_x <= vic_x2 and atk_y >= vic_y1 and atk_y <= vic_y2:
+    if atk_x >= vic_x1 and atk_x <= vic_x2 and atk_y >= vic_y1 and atk_y <= vic_y2 and iou_atk > iou_vic:
         return True
 
     return False
@@ -300,22 +337,18 @@ if __name__ == "__main__":
             success_flag = False
             current_streak = 0
             max_streak = 0
-            for i in range(len(sim_state)):
-                if check_success(sim_state, i):
-                    current_streak += 1
-                    if current_streak > max_streak:
-                        max_streak = current_streak
-                    if not success_flag:
-                        if check_success(sim_state, i + 1):
-                            success_flag = True
-                            success += 1
-                            suc_trials.append((trial_num + 1, i, 0.0))  # IoU is not calculated here
-                        elif i == len(sim_state) - 1: # switched at the last frame
-                            success_flag = True
-                            success += 1
-                            suc_trials.append((trial_num + 1, i, 0.0))
-                else:
-                    current_streak = 0
+            check_success(sim_state, 0)
+            if sim_state._hijacking_intervals is not None:
+                streaks = sim_state._hijacking_intervals
+            else:
+                streaks = [(0,0)]
+            for streak in streaks:
+                length = streak[1] - streak[0]
+                if length > max_streak:
+                    max_streak = length
+                if length >= 4:
+                    success_flag = True
+
 
             longest_streaks.append(max_streak)
 
@@ -348,7 +381,8 @@ if __name__ == "__main__":
 
         for tracker in trackers:
             if tracker in exp_name:
-                tracker_results[tracker]["success"] += sum([1 for streak in longest_streaks if streak >= 2])  # consider it a success if there's a streak of at least 5 frames
+                print(longest_streaks)
+                tracker_results[tracker]["success"] += sum([1 for streak in longest_streaks if streak >= 5])
                 tracker_results[tracker]["dos"] += dos_count
                 tracker_results[tracker]["total"] += (len(dirs) - 1 - skip_count)
     print("Tracker performance summary:")
