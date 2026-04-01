@@ -35,7 +35,7 @@ Test PX4 and Gazebo setup
 cd ~/PX4-Autopilot
 GZ_IP=127.0.0.1 HEADLESS=1 PX4_GZ_WORLD=field PX4_SYS_AUTOSTART=4002 PX4_GZ_MODEL_POSE="10.0,0.0,1.0,0.0,0.0,0.0" PX4_SIM_MODEL=x500_gimbal ./build/px4_sitl_default/bin/px4
 ```
-If you see `INFO  [init] Gazebo world is ready`, the key PX4-Autopilot and Gazebo environments are ready.
+If you see `INFO  [init] Gazebo world is ready`, the key PX4-Autopilot and Gazebo environments are ready. Please then hit `ctrl-c` to terminate this PX4 and Gazebo setup test since the project will spawn them automatically. 
 
 ## Reproduction
 
