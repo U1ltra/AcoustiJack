@@ -262,7 +262,7 @@ def select_motion_model_setting(file_path, gim_max_speed):
     """Select the profiled motion model setting based on gim_max_speed.
 
     gim_max_speed [0.1, 2.0, 2.0] -> setting 1 (three resonant freqs)
-    gim_max_speed [1.0, 4.0, 1.0] -> setting 2 (single resonant freq at 30 kHz)
+    gim_max_speed [1.0, 3.0, 1.0] -> setting 2 (single resonant freq at 30 kHz)
     """
     with open(file_path, 'r') as f:
         content = f.read()
@@ -274,32 +274,43 @@ def select_motion_model_setting(file_path, gim_max_speed):
             "        self.velocity_amplitudes = [  # roll, pitch, yaw for each resonant frequency\n"
             "        [math.radians(2.0032), math.radians(15.6742), math.radians(134.5029)],\n"
             "        ]\n"
+            "        self.noise_stds = [\n"
+            "            [math.radians(1.69), math.radians(2.08), math.radians(19.72)],\n"
+            "        ]\n"
             "        # self.resonant_freqs = [30000.0]  # Hz\n"
             "        # self.aliased_frequencies = [4.0]  # Hz\n"
             "        # self.velocity_amplitudes = [  # roll, pitch, yaw for each resonant frequency\n"
             "        #     [math.radians(2.0032), math.radians(134.5029), math.radians(15.6742)],\n"
             "        # ]\n"
+            "        # self.noise_stds = [\n"
+            "        #     [math.radians(9.9), math.radians(29.2), math.radians(2.58)],\n"
+            "        # ]\n"
         )
         print("Selected motion model setting 1 (gim_max_speed=[0.1, 2.0, 2.0])")
-    elif list(gim_max_speed) == [1.0, 4.0, 1.0]:
+    elif list(gim_max_speed) == [1.0, 3.0, 1.0]:
         new_init_body = (
             "        # self.resonant_freqs = [23231.0]  # Hz\n"
             "        # self.aliased_frequencies = [2.0332]  # Hz\n"
             "        # self.velocity_amplitudes = [  # roll, pitch, yaw for each resonant frequency\n"
             "        #     [math.radians(2.0032), math.radians(15.6742), math.radians(134.5029)],\n"
             "        # ]\n"
-            "\n"
+            "        # self.noise_stds = [\n"
+            "        #     [math.radians(1.69), math.radians(2.08), math.radians(19.72)],\n"
+            "        # ]\n"
             "        self.resonant_freqs = [30000.0]  # Hz\n"
             "        self.aliased_frequencies = [4.0]  # Hz\n"
             "        self.velocity_amplitudes = [  # roll, pitch, yaw for each resonant frequency\n"
             "            [math.radians(2.0032), math.radians(134.5029), math.radians(15.6742)],\n"
             "        ]\n"
+            "        self.noise_stds = [\n"
+            "            [math.radians(9.9), math.radians(29.2), math.radians(2.58)],\n"
+            "        ]\n"
         )
-        print("Selected motion model setting 2 (gim_max_speed=[1.0, 4.0, 1.0])")
+        print("Selected motion model setting 2 (gim_max_speed=[1.0, 3.0, 1.0])")
     else:
         raise ValueError(
             f"Unknown gim_max_speed {gim_max_speed}. "
-            "Expected [0.1, 2.0, 2.0] (setting 1) or [1.0, 4.0, 1.0] (setting 2)."
+            "Expected [0.1, 2.0, 2.0] (setting 1) or [1.0, 3.0, 1.0] (setting 2)."
         )
 
     pattern = r'(    def __init__\(self\):\n).*?(?=        self\.resonant_freqs = self\.resonant_freqs\[)'
