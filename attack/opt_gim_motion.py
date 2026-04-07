@@ -29,6 +29,7 @@ class AttackConfig:
     w4: float = 0.0  # Attacker to attacker prediction tracking error weight
     w5: float = 0.0  # Angular velocity magnitude penalty
     w6: float = 0.0  # Angular velocity smoothness penalty
+    w_temporal: float = 0.0  # Temporal guidance: attacker box distance to previous frame's victim prediction
     
     # gimbal properties
     # This should be the maximum injectable angular velocity for each gimbal axis across different resonant frequencies
@@ -425,15 +426,33 @@ class TFGimbalAttackOptimizer:
         
         if shift_steps >= self.config.N:
             # If shifting more than sequence length, reinitialize completely
-            new_omega = tf.random.normal((self.config.N, 3), stddev=1.0)
+            # new_omega = tf.random.normal((self.config.N, 3), stddev=1.0)
             # initialize with the maximum angular velocity value
             # new_omega = tf.ones((self.config.N, 3), dtype=tf.float32) * self.config.omega_max
+            
+            # initialize new_omega to [0.0,0.0,-2.0] for aggressive yaw motion if omega_max is [0.1,0.1,2.0]
+            # initalize new_omega to [0.0,-3.0,0.0] for aggressive pitch motion if omega_max is [0.1,3.0,0.1]
+            if self.config.omega_max[2] == 2.0:
+                new_omega = tf.constant([[0.0, 0.0, 2.0]], dtype=tf.float32)
+            elif self.config.omega_max[1] == 3.0:
+                new_omega = tf.constant([[0.0, 3.0, 0.0]], dtype=tf.float32)
+            else:
+                new_omega = tf.zeros((1, 3), dtype=tf.float32)
+                raise ValueError("Unsupported omega_max configuration for reinitialization.")
+                       
         else:
             # Shift existing values forward and pad with zeros
             shifted_part = current_omega[shift_steps:]  # Take from shift_steps to end
             # zero_padding = tf.zeros((shift_steps, 3), dtype=tf.float32)  # Pad with zeros
-            padding = tf.random.normal((shift_steps, 3), stddev=1.0)
+            # padding = tf.random.normal((shift_steps, 3), stddev=1.0)
             # padding = tf.ones((shift_steps, 3), dtype=tf.float32) * self.config.omega_max  # Pad with max omega value
+            if self.config.omega_max[2] == 2.0:
+                padding = tf.constant([[0.0, 0.0, 2.0]] * shift_steps, dtype=tf.float32)
+            elif self.config.omega_max[1] == 3.0:
+                padding = tf.constant([[0.0, 3.0, 0.0]] * shift_steps, dtype=tf.float32)
+            else:
+                padding = tf.zeros((shift_steps, 3), dtype=tf.float32)
+                raise ValueError("Unsupported omega_max configuration for reinitialization.")
             new_omega = tf.concat([shifted_part, padding], axis=0)
 
         self.omega_sequence.assign(new_omega)
@@ -507,11 +526,16 @@ class TFGimbalAttackOptimizer:
         victim_track_id = 10
         attacker_track_id = 20
 
+        # Temporal guidance: holds the first frame's victim tracker prediction (xywh).
+        # Set once on the first frame and never updated — provides a fixed directional anchor.
+        first_victim_pred_xywh = None
+
         # Iterate over optimization intervals
         for i in range(N):
             current_omega = omega_sequence[i]
             # variable to hold the minimum attacker_error
             min_attacker_error = tf.constant(float("inf"))
+            min_temporal_error = tf.constant(0.0)
 
             # Process each frame within this optimization interval
             for j in range(frames_per_interval):
@@ -604,18 +628,31 @@ class TFGimbalAttackOptimizer:
                 ) / 2.0  # Half the scale of the attacker's bbox
                 attacker_error = self.huber_loss_tf(attacker_error, attacker_error_threshold)
                 min_attacker_error = tf.minimum(min_attacker_error, attacker_error)
-            
+
+                # Temporal guidance loss: distance from current attacker box to the
+                # first frame's victim tracker prediction. Fixed anchor for the entire rollout;
+                # zero for the very first frame (anchor not yet established).
+                if first_victim_pred_xywh is not None:
+                    temporal_error = tf.norm(attacker_xy_actual[:2] - first_victim_pred_xywh[:2])
+                    temporal_error = self.huber_loss_tf(temporal_error, attacker_error_threshold)
+                    min_temporal_error = tf.minimum(min_temporal_error, temporal_error)
+
+                # Record the first frame's prediction as the fixed anchor
+                if first_victim_pred_xywh is None:
+                    first_victim_pred_xywh = victim_xy_pred
+
             omega_reward = self.exponential_reward(current_omega, decay_factor=0.1)
 
             # Add interval-level penalties
             interval_loss = (
                 self.config.w3 * min_attacker_error  # Want to lose the victim target
                 + self.config.w5 * omega_reward  # Angular velocity penalty
+                + self.config.w_temporal * min_temporal_error  # Temporal directional guidance
             )
             total_loss += interval_loss
 
         return total_loss, tf.stack(frame_traces, axis=0)
-    
+
     #@tf.function
     def compute_loss_tf_siam(self, omega_sequence, atk_states):
         """Compute loss function for SiamRPN tracker optimization"""
@@ -640,13 +677,18 @@ class TFGimbalAttackOptimizer:
 
         total_loss = 0.0
         frame_traces = []
-        
+
         tracker_state.reset_state()
+
+        # Temporal guidance: holds the first frame's victim tracker prediction (xywh).
+        # Set once on the first frame and never updated — provides a fixed directional anchor.
+        first_victim_pred_xywh = None
 
         # Iterate over optimization intervals
         for i in range(N):
             current_omega = omega_sequence[i]
             min_attacker_error = tf.constant(float("inf"))
+            min_temporal_error = tf.constant(0.0)
             it_start = time.time()
             
             # Process each frame within this optimization interval
@@ -716,6 +758,19 @@ class TFGimbalAttackOptimizer:
                 attacker_error_threshold = tf.maximum(attacker_error_threshold, 1e-6)
                 attacker_error = self.huber_loss_tf(attacker_error, attacker_error_threshold)
                 min_attacker_error = tf.minimum(min_attacker_error, attacker_error)
+
+                # Temporal guidance loss: distance from current attacker box to the
+                # first frame's victim tracker prediction. Fixed anchor for the entire rollout;
+                # zero for the very first frame (anchor not yet established).
+                if first_victim_pred_xywh is not None:
+                    temporal_error = tf.norm(attacker_xy_actual[:2] - first_victim_pred_xywh[:2])
+                    temporal_error = self.huber_loss_tf(temporal_error, attacker_error_threshold)
+                    min_temporal_error = tf.minimum(min_temporal_error, temporal_error)
+
+                # Record the first frame's prediction as the fixed anchor
+                if first_victim_pred_xywh is None:
+                    first_victim_pred_xywh = victim_xy_pred
+
                 error_time = time.time()
                 # Debug timing information
             #     print(f"Frame {frame_idx} timing (s): "
@@ -734,9 +789,10 @@ class TFGimbalAttackOptimizer:
             interval_loss = (
                 self.config.w3 * min_attacker_error  # Want to lose the victim target
                 + self.config.w5 * omega_reward  # Angular velocity penalty
+                + self.config.w_temporal * min_temporal_error  # Temporal directional guidance
             )
             total_loss += interval_loss
-            
+
         return total_loss, tf.stack(frame_traces, axis=0)
 
     def apply_constraints_tf(self, omega_sequence):
