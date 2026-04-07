@@ -34,10 +34,10 @@ class AttackConfig:
     # This should be the maximum injectable angular velocity for each gimbal axis across different resonant frequencies
     # It will be clipped during execution if it is not achievable on all axes at the same time
     omega_max: np.ndarray = field(
-        default_factory=lambda: np.array([0.1, 2.0, 2.0], dtype=np.float32)
+        default_factory=lambda: np.array([0.1, 0.1, 2.0], dtype=np.float32)
     )  # Max angular velocity [rad/s], roll, pitch, yaw. 
     omega_max_norm: float = field(
-        default_factory=lambda: np.linalg.norm(np.array([0.1, 2.0, 2.0], dtype=np.float32))
+        default_factory=lambda: np.linalg.norm(np.array([0.1, 0.1, 2.0], dtype=np.float32))
     )
     frequency: float = 4.0 # 134.99 deg/s at 2.0349 Hz
     fps: float = 30.0  # Camera frame rate

@@ -221,7 +221,7 @@ class SimStates(TrackerBase):
             frequency= atk_cycle,  # attack cycle in Hz
             T_fps=1/kwargs.get("fps", 30),  # frame interval in seconds (1/fps)
         )
-        self.config.omega_max = np.array(kwargs.get("gim_max_speed", [1.0, 1.0, 2.0]), dtype=np.float32)  # gimbal max speed in pitch, roll, yaw (rad/s)
+        self.config.omega_max = np.array(kwargs.get("gim_max_speed", [0.1, 0.1, 2.0]), dtype=np.float32)  # gimbal max speed in pitch, roll, yaw (rad/s)
         self.config.omega_max_norm = np.linalg.norm(self.config.omega_max)
         if self.surrogate_model == "UCMCTrack":
             self.config.w5 = 1.0
@@ -1034,7 +1034,7 @@ class AttackManager(Node):
         # Setup trackers
         self.victim_vehicle = SimStates(
             self.id2name, tracker_type=tracker_type, surrogate_model=surrogate_model, 
-            atk_cycle=kwargs.get("atk_cycle", 2.03), gim_max_speed=kwargs.get("gim_max_speed", [1.0, 1.0, 2.0]),
+            atk_cycle=kwargs.get("atk_cycle", 2.03), gim_max_speed=kwargs.get("gim_max_speed", [0.1, 0.1, 2.0]),
             victim_model=kwargs.get("victim_model", None), atker_model=kwargs.get("atker_model", None),
             world_file=world_file, uav_height=kwargs.get("uav_height", 8.0), fps=kwargs.get("fps", 30),
         )  # vic uav
@@ -1413,7 +1413,7 @@ class AttackManager(Node):
             self.start_pub_atk.publish(Bool(data=True))
             atker_pose = self.victim_vehicle.attacker_pose_msg(
                 self.main_camera.pose_wo_noise_history[-1], self.vic_pose_history[-1], self.atk_pose_history[-1], dist=self.atker_dist, victim_velocity=self.victim_velocity,
-                angle=self.atker_angle, motion_model=self.attack_started, sim_time_to_move=sim_time_to_move
+                angle=self.atker_angle, motion_model=False, sim_time_to_move=sim_time_to_move
             )
             # print(f"Moving attacker to position: {atker_pose.pose.position.x:.2f}, {atker_pose.pose.position.y:.2f}, {atker_pose.pose.position.z:.2f}")
             self.atk_pose_pub.publish(atker_pose) # attacker move to vulnerable position
@@ -1797,7 +1797,7 @@ def parse_args():
         "--gim_max_speed",
         type=float,
         nargs=3,
-        default=[0.1, 2.0, 2.0],
+        default=[0.1, 0.1, 2.0],
         help="Gimbal maximum speed in pitch, roll, yaw (rad/s)",
     )
     parser.add_argument(
