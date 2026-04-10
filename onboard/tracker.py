@@ -66,10 +66,10 @@ class OnboardTracker:
             self.cfg = cfg
             cfg.merge_from_file(tracker_config.siamrpn_config)
             cfg.CUDA = torch.cuda.is_available()
-            device = torch.device("cuda" if cfg.CUDA else "cpu")
+            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             
             self._model = ModelBuilder()
-            self._model.load_state_dict(torch.load(tracker_config.siamrpn_model))
+            self._model.load_state_dict(torch.load(tracker_config.siamrpn_model, map_location=device))
             self._model.eval().to(device)
             self._tracker = build_tracker(self._model)
             self._last_frame = None
@@ -90,8 +90,9 @@ class OnboardTracker:
             
             # load net
             self._model = SiamRPNBIG()
-            self._model.load_state_dict(torch.load(tracker_config.dasiamrpn_model))
-            self._model.eval().cuda()
+            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            self._model.load_state_dict(torch.load(tracker_config.dasiamrpn_model, map_location=device))
+            self._model.eval().to(device)
         elif tracker_config.tracker_type == "UCMCTrack":
             self.tracker_type = "UCMCTrack"
             self.det_conf_threshold = tracker_config.conf_thresh
