@@ -256,6 +256,7 @@ def parse_hijacking_log(log_path):
 
 def check_success(sim_state, idx):
     if idx < 0 or idx >= len(sim_state):
+        sim_state._hijacking_intervals = None
         return False
 
     if not hasattr(sim_state, '_hijacking_intervals'):
