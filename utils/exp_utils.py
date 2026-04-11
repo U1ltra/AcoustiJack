@@ -653,7 +653,7 @@ def launch_scripts(args, trial_configs, trial_index):
 
     if args.realtime_factor == 1.0 or args.realtime_factor == 0.5:
         if args.world_file in ["field", "urban", "urban_car"]:
-            time.sleep(40)
+            time.sleep(45)
         else:
             time.sleep(25)
     else:
