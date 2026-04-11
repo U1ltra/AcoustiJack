@@ -114,7 +114,7 @@ def parse_args():
     parser.add_argument(
         "--timeout",
         type=int,
-        default=400,
+        default=500,
         help="Timeout for the experiment in seconds",
     )
     parser.add_argument(
@@ -250,7 +250,7 @@ def main():
         )
         print(f"UAV | pose {trial_configs['UAV_poses'][i]}, height {trial_configs['heights'][i]}")
 
-        for retry in range(2):
+        for retry in range(3):
             # Run the simulation
             exp_dir = os.path.join(args.save_dir, f"trial_{i+1:03d}")
             # delete the exp_dir if it exists
@@ -301,8 +301,8 @@ def main():
                 break
             else:
                 print("Box video not found, retrying...")
-                if retry == 1:
-                    print("Experiment failed after 2 tries.")
+                if retry == 2:
+                    print("Experiment failed after 3 tries.")
 
         # for dir_name in ["images", "raw_images"]:
         #     for img_name in ["image"]:
