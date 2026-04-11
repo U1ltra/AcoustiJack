@@ -653,7 +653,7 @@ def launch_scripts(args, trial_configs, trial_index):
 
     if args.realtime_factor == 1.0 or args.realtime_factor == 0.5:
         if args.world_file in ["field", "urban", "urban_car"]:
-            time.sleep(25)
+            time.sleep(50)
         else:
             time.sleep(25)
     else:
@@ -670,7 +670,7 @@ def launch_scripts(args, trial_configs, trial_index):
     )
     if args.realtime_factor == 1.0 or args.realtime_factor == 0.5:
         if args.world_file in ["raceway", "urban_car"]:
-            time.sleep(25)
+            time.sleep(50)
         else:
             time.sleep(15)
         # if trial_configs["heights"][trial_index] > 20.0:

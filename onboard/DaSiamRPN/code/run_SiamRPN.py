@@ -3,6 +3,7 @@
 # Licensed under The MIT License
 # Written by Qiang Wang (wangqiang2015 at ia.ac.cn)
 # --------------------------------------------------------
+import torch
 import numpy as np
 from torch.autograd import Variable
 import torch.nn.functional as F
@@ -140,7 +141,10 @@ def SiamRPN_init(im, target_pos, target_sz, net):
     z_crop = get_subwindow_tracking(im, target_pos, p.exemplar_size, s_z, avg_chans)
 
     z = Variable(z_crop.unsqueeze(0))
-    net.temple(z.cuda())
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    net = net.to(device)
+    z = z.to(device)
+    net.temple(z)
 
     if p.windowing == 'cosine':
         window = np.outer(np.hanning(p.score_size), np.hanning(p.score_size))
@@ -176,7 +180,14 @@ def SiamRPN_track(state, im):
     # extract scaled crops for search region x at previous target position
     x_crop = Variable(get_subwindow_tracking(im, target_pos, p.instance_size, round(s_x), avg_chans).unsqueeze(0))
 
-    target_pos, target_sz, score = tracker_eval(net, x_crop.cuda(), target_pos, target_sz * scale_z, window, scale_z, p)
+    #target_pos, target_sz, score = tracker_eval(net, x_crop.cuda(), target_pos, target_sz * scale_z, window, scale_z, p)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    x_crop = x_crop.to(device)
+    net = net.to(device)
+    target_pos, target_sz, score = tracker_eval(
+        net, x_crop, target_pos, target_sz * scale_z, window, scale_z, p
+    )
+
     target_pos[0] = max(0, min(state['im_w'], target_pos[0]))
     target_pos[1] = max(0, min(state['im_h'], target_pos[1]))
     target_sz[0] = max(10, min(state['im_w'], target_sz[0]))
