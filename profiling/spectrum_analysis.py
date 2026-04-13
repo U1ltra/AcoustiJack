@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 from scipy.optimize import curve_fit
 from sklearn.metrics import r2_score
+import argparse
 
 plt.rcParams.update({
     'font.size': 14,
@@ -156,4 +157,7 @@ def process(folder_path):
     plt.close('all')
 
 if __name__ == "__main__":
-    process('')
+    parser = argparse.ArgumentParser(description='Process IMU data for spectrum analysis.')
+    parser.add_argument('folder', type=str, help='Path to the folder containing CSV files')
+    args = parser.parse_args()
+    process(args.folder)
