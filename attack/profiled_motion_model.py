@@ -115,10 +115,16 @@ class profiledMotionModels:
         self.velocity_amplitudes = [  # roll, pitch, yaw for each resonant frequency
         [math.radians(2.0032), math.radians(15.6742), math.radians(134.5029)],
         ]
+        self.noise_stds = [
+            [math.radians(1.69), math.radians(2.08), math.radians(19.72)],
+        ]
         # self.resonant_freqs = [30000.0]  # Hz
         # self.aliased_frequencies = [4.0]  # Hz
         # self.velocity_amplitudes = [  # roll, pitch, yaw for each resonant frequency
-        #     [math.radians(2.0032), math.radians(134.5029), math.radians(15.6742)],
+        #     [math.radians(2.0032), math.radians(167.92), math.radians(15.6742)],
+        # ]
+        # self.noise_stds = [
+        #     [math.radians(9.9), math.radians(29.2), math.radians(2.58)],
         # ]
         self.resonant_freqs = self.resonant_freqs[: len(self.velocity_amplitudes)]
         self.aliased_frequencies = self.aliased_frequencies[: len(self.velocity_amplitudes)]
@@ -132,6 +138,7 @@ class profiledMotionModels:
                 aliased_frequency=self.aliased_frequencies[i],
                 initial_phase=0.0,
                 wave_type="sine",
+                std=self.noise_stds[i][0],
             )
             pitch_wg = MotionWaveGenerator(
                 resonant_freq=self.resonant_freqs[i],
@@ -139,6 +146,7 @@ class profiledMotionModels:
                 aliased_frequency=self.aliased_frequencies[i],
                 initial_phase=0.0,
                 wave_type="sine",
+                std=self.noise_stds[i][1],
             )
             yaw_wg = MotionWaveGenerator(
                 resonant_freq=self.resonant_freqs[i],
@@ -146,6 +154,7 @@ class profiledMotionModels:
                 aliased_frequency=self.aliased_frequencies[i],
                 initial_phase=0.0,
                 wave_type="sine",
+                std=self.noise_stds[i][2],
             )
             self.wave_generators.append([roll_wg, pitch_wg, yaw_wg])
 
