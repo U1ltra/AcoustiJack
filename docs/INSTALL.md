@@ -24,6 +24,12 @@ Pull our pre-built Docker image (all dependencies included), or build it yoursel
 docker pull jiaruili0000/acoustijack:v1
 ```
 
+Create the host mount directory to store experiment results before running the container:
+
+```bash
+mkdir -p ~/Documents/exp/docker
+```
+
 Launch the container:
 
 ```bash
@@ -46,11 +52,7 @@ sudo docker run -it --rm \
 | `TF_FORCE_GPU_ALLOW_GROWTH=true` | Prevents TensorFlow from pre-allocating all GPU memory |
 | `-v ~/Documents/exp/docker:/root/exp` | Mounts a host directory at `/root/exp` inside the container, preserving experiment logs if the container exits unexpectedly |
 
-Create the host mount directory before running the container:
 
-```bash
-mkdir -p ~/Documents/exp/docker
-```
 
 ### CPU-only
 
