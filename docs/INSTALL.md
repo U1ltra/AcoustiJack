@@ -112,10 +112,11 @@ The checkpoints must be organized as follows inside the container:
 
 ```
 onboard/
-├── siamrpn_alex_dwxcorr/
-│   ├── model.pth
-│   └── config.yaml
-└── SiamRPNBIG.model
+├── models/
+│   ├── siamrpn_alex_dwxcorr/
+│   │   ├── model.pth
+│   │   └── config.yaml
+│   └── SiamRPNBIG.model
 ```
 
 ## Cloud Setup (EC2)
