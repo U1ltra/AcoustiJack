@@ -313,7 +313,7 @@ if __name__ == "__main__":
         elif args.claim == 0:
             eval_exps.append(exp_name)
 
-    trackers = ["siamr", "dasiam", "sort", "ucmc", "kcf"]
+    trackers = ["_siam", "dasiam", "sort", "ucmc", "kcf"]
     tracker_results = {tracker: {"success": 0, "dos": 0, "total": 0} for tracker in trackers}
 
     for exp_name in eval_exps:
