@@ -8,6 +8,7 @@ REPO_ROOT="/root/AcoustiJack"
 PLUGINS_DIR="$REPO_ROOT/plugins"
 OBJECTS_DIR="$REPO_ROOT/config/objects"
 WORLDS_DIR="$REPO_ROOT/config/worlds"
+KCF_DIR="$REPO_ROOT/kcf-master"
 
 PX4_GZ_MODELS="/root/PX4-Autopilot/Tools/simulation/gz/models"
 PX4_GZ_WORLDS="/root/PX4-Autopilot/Tools/simulation/gz/worlds"
@@ -16,7 +17,7 @@ GZ_MODELS_DIR="$HOME/.gz/models"
 # ─────────────────────────────────────────────────────────────────────────────
 # 0. Install dependencies
 # ─────────────────────────────────────────────────────────────────────────────
-echo "=== [0/3] Checking installations ==="
+echo "=== [0/4] Checking installations ==="
 
 if find /usr -name "MAVSDKConfig.cmake" 2>/dev/null | grep -q .; then
     echo "  MAVSDK already installed, skipping."
@@ -58,7 +59,7 @@ cd ..
 # ─────────────────────────────────────────────────────────────────────────────
 # 1. Compile Gazebo plugins
 # ─────────────────────────────────────────────────────────────────────────────
-echo "=== [1/3] Building Gazebo plugins ==="
+echo "=== [1/4] Building Gazebo plugins ==="
 
 for plugin_dir in "$PLUGINS_DIR"/*/; do
     plugin_name=$(basename "$plugin_dir")
@@ -71,9 +72,29 @@ for plugin_dir in "$PLUGINS_DIR"/*/; do
 done
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 2. Prepare Gazebo models
+# 2. Compile KCF tracker (kcf-master)
 # ─────────────────────────────────────────────────────────────────────────────
-echo "=== [2/3] Preparing Gazebo models ==="
+# Builds $KCF_DIR/build/kcf_vot, the executable launched as a subprocess by
+# onboard/tracker.py:KCFTracker (config field TrackerConfig.kcf_executable).
+echo "=== [2/4] Building KCF tracker ==="
+
+if [ ! -d "$KCF_DIR" ]; then
+    echo "ERROR: KCF source directory not found at $KCF_DIR"; exit 1;
+fi
+mkdir -p "$KCF_DIR/build"
+(
+    cd "$KCF_DIR/build"
+    cmake .. && make -j"$(nproc)"
+) || { echo "ERROR: Failed to build kcf-master"; exit 1; }
+if [ ! -x "$KCF_DIR/build/kcf_vot" ]; then
+    echo "ERROR: kcf_vot binary missing after build"; exit 1;
+fi
+echo "  Done: kcf_vot -> $KCF_DIR/build/kcf_vot"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 3. Prepare Gazebo models
+# ─────────────────────────────────────────────────────────────────────────────
+echo "=== [3/4] Preparing Gazebo models ==="
 
 mkdir -p "$GZ_MODELS_DIR"
 
@@ -84,9 +105,9 @@ for model_dir in "$OBJECTS_DIR"/*/; do
 done
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 3. Prepare Gazebo worlds
+# 4. Prepare Gazebo worlds
 # ─────────────────────────────────────────────────────────────────────────────
-echo "=== [3/3] Preparing Gazebo worlds ==="
+echo "=== [4/4] Preparing Gazebo worlds ==="
 
 GIMBAL_SDF="$WORLDS_DIR/gimbal_model.sdf"
 GIMBAL_DEST="$PX4_GZ_MODELS/gimbal/model.sdf"
