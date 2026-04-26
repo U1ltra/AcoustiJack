@@ -262,7 +262,7 @@ def select_motion_model_setting(file_path, gim_max_speed):
     """Select the profiled motion model setting based on gim_max_speed.
 
     gim_max_speed [0.1, 0.1, 2.0] -> setting 1
-    gim_max_speed [1.0, 4.0, 1.0] -> setting 2
+    gim_max_speed [0.1, 3.0, 0.1] -> setting 2
     """
     with open(file_path, 'r') as f:
         content = f.read()
@@ -287,7 +287,7 @@ def select_motion_model_setting(file_path, gim_max_speed):
             "        # ]\n"
         )
         print("Selected motion model setting 1 (gim_max_speed=[0.1, 0.1, 2.0])")
-    elif list(gim_max_speed) == [1.0, 4.0, 1.0]:
+    elif list(gim_max_speed) == [0.1, 3.0, 0.1]:
         new_init_body = (
             "        # self.resonant_freqs = [23231.0]  # Hz\n"
             "        # self.aliased_frequencies = [2.0332]  # Hz\n"
@@ -306,11 +306,11 @@ def select_motion_model_setting(file_path, gim_max_speed):
             "            [math.radians(9.9), math.radians(29.2), math.radians(2.58)],\n"
             "        ]\n"
         )
-        print("Selected motion model setting 2 (gim_max_speed=[1.0, 4.0, 1.0])")
+        print("Selected motion model setting 2 (gim_max_speed=[0.1, 3.0, 0.1])")
     else:
         raise ValueError(
             f"Unknown gim_max_speed {gim_max_speed}. "
-            "Expected [0.1, 0.1, 2.0] (setting 1) or [1.0, 4.0, 1.0] (setting 2)."
+            "Expected [0.1, 0.1, 2.0] (setting 1) or [0.1, 3.0, 0.1] (setting 2)."
         )
 
     pattern = r'(    def __init__\(self\):\n).*?(?=        self\.resonant_freqs = self\.resonant_freqs\[)'
