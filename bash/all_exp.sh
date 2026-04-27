@@ -1,4 +1,4 @@
-cd /root/AcoustiJack
+cd /root/Banshee
 source env.sh
 
 # ===== Setting 1: HighEndDrone =====

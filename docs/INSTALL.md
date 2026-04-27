@@ -75,8 +75,8 @@ Run the following inside the Docker container:
 
 ```bash
 cd ~
-git clone https://github.com/U1ltra/AcoustiJack/
-cd AcoustiJack
+git clone https://github.com/U1ltra/Banshee/
+cd Banshee
 bash install.sh
 source env.sh
 ```
@@ -105,7 +105,7 @@ Model checkpoints can be downloaded from [Google Drive](https://drive.google.com
 scp -r /local/path/to/models user@remote-host:~/Documents/exp/docker/
 
 # Then inside the Docker container, copy them into the repo
-cp -r /root/exp/models /root/AcoustiJack/onboard/
+cp -r /root/exp/models /root/Banshee/onboard/
 ```
 
 The checkpoints must be organized as follows inside the container:
@@ -159,8 +159,8 @@ Inside the container:
 
 ```bash
 cd ~
-git clone https://github.com/U1ltra/AcoustiJack/
-cd AcoustiJack
+git clone https://github.com/U1ltra/Banshee/
+cd Banshee
 cp -r /root/exp/models onboard/
 bash install.sh
 source env.sh

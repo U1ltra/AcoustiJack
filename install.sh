@@ -4,7 +4,7 @@
 
 set -e
 
-REPO_ROOT="/root/AcoustiJack"
+REPO_ROOT="/root/Banshee"
 PLUGINS_DIR="$REPO_ROOT/plugins"
 OBJECTS_DIR="$REPO_ROOT/config/objects"
 WORLDS_DIR="$REPO_ROOT/config/worlds"

@@ -1,7 +1,7 @@
 # Banshee: Target Switch Attacks on Gimbal-Stabilized Visual Tracking Systems via Acoustic Injection
 
 ## About
-Gimbal-stabilized visual tracking is widely used in autonomous systems such as UAVs. While prior work shows that acoustic signals can disturb gimbal internals, their impact on end-to-end tracking applications remains unclear. We present AcoustiJack, the first physically realizable attack that induces target switching in UAV visual tracking by exploiting acoustic vulnerabilities in gimbal-camera systems. AcoustiJack generates acoustic signals that cause directionally biased camera motion, breaking inter-frame target associations and steering the tracker toward an attacker-chosen object, leading to target switch or target loss. We achieve 93.6% success in simulation and 95.5% in real-world benchtop and in-flight experiments. Our results reveal a practical cross-domain vulnerability between acoustics and vision, highlighting the need for more robust system designs.
+Gimbal-stabilized visual tracking is widely used in autonomous systems such as UAVs. While prior work shows that acoustic signals can disturb gimbal internals, their impact on end-to-end tracking applications remains unclear. We present Banshee, the first physically realizable attack that induces target switching in UAV visual tracking by exploiting acoustic vulnerabilities in gimbal-camera systems. Banshee generates acoustic signals that cause directionally biased camera motion, breaking inter-frame target associations and steering the tracker toward an attacker-chosen object, leading to target switch or target loss. We achieve 93.6% success in simulation and 95.5% in real-world benchtop and in-flight experiments. Our results reveal a practical cross-domain vulnerability between acoustics and vision, highlighting the need for more robust system designs.
 
 ## Table of Contents
 
@@ -78,7 +78,7 @@ Two claims from the paper are evaluated; each has a dedicated documentation file
 Evaluates the attack against DaSiamRPN (appearance-based) and UCMCTrack (motion-based) trackers on a HighEndDrone platform. Compare results to Figure 10 (*HighEndDrone* column) in the paper.
 
 ```bash
-# Inside the Docker container, from /root/AcoustiJack
+# Inside the Docker container, from /root/Banshee
 bash bash/claim1.sh
 python utils/eval/offline_eval.py --claim 1
 ```

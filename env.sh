@@ -2,7 +2,7 @@
 # env.sh — Set up environment variables for each new terminal session
 # Usage: source env.sh
 
-REPO_ROOT="/root/AcoustiJack"
+REPO_ROOT="/root/Banshee"
 PLUGINS_DIR="$REPO_ROOT/plugins"
 
 # ─────────────────────────────────────────────────────────────────────────────
