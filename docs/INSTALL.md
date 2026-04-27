@@ -98,15 +98,17 @@ If you see `INFO  [init] Gazebo world is ready`, the environment is correctly co
 
 Model checkpoints can be downloaded from [Google Drive](https://drive.google.com/drive/folders/1lIzxy_oZuaZ_CmRa1xSjX1fd9fFWlJrb?usp=sharing)
 
-**Transferring checkpoints into the container.** If you downloaded the models on your local machine and need to transfer them to a remote machine or Docker container, use `scp`:
+**Making checkpoints available inside the container.** Place the downloaded `models/` directory into the host mount point (`~/Documents/exp/docker`) on the machine that runs Docker. Because that directory is bind-mounted to `/root/exp` inside the container (see the `-v` flag in the `docker run` command above), the files become visible inside the container without any copy step:
 
 ```bash
-# From your local machine — copy the models/ directory to the host mount point
-scp -r /local/path/to/models user@remote-host:~/Documents/exp/docker/
+# On the Docker host — move the downloaded models/ into the mount point
+mv /local/path/to/models ~/Documents/exp/docker/
 
-# Then inside the Docker container, copy them into the repo
+# Then, inside the Docker container, copy them into the repo
 cp -r /root/exp/models /root/Banshee/onboard/
 ```
+
+If the Docker host is a remote machine (e.g. an EC2 instance), see [Cloud Setup (EC2)](#cloud-setup-ec2) for how to upload the checkpoints with `scp` first.
 
 The checkpoints must be organized as follows inside the container:
 
