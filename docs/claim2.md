@@ -6,9 +6,9 @@
 Specific results to compare to in the manuscript:
 - **Figure 10**, *MidEndDrone* column, rows *DaSiamRPN* and *UCMCTrack*.
 
-Expected values (Hijack rate / Track loss rate):
+Expected values (Target switch rate / Target loss rate):
 
-| Tracker | Hijack rate | Track loss rate |
+| Tracker | Target switch rate | Target loss rate |
 |---------|------------|-----------------|
 | UCMCTrack | 77.4% | 100% |
 | DaSiamRPN | 93.4% | 99.1% |
@@ -30,9 +30,9 @@ The scaled-down experiment should take about *~4h* to complete with an NVIDIA GP
 3. Inspect the printed summary at the end of the output, e.g.:
    ```
    Tracker performance summary:
-   dasiam: Hijack rate: 0.93, Track loss rate: 0.07
-   ucmc: Hijack rate: 0.77, Track loss rate: 0.23
+   dasiam: Target switch rate: 0.93, Target loss rate: 0.07
+   ucmc: Target switch rate: 0.77, Target loss rate: 0.23
    ```
-   Compare the **Hijack rate** values to Figure 10 (*MidEndDrone* column) in the paper.
+   Compare the **Target switch rate** values to Figure 10 (*MidEndDrone* column) in the paper.
 
 > **Note**: Trials that fail to load (e.g., `Failed to load simulation state`) correspond to trials that did not initialize correctly due to integration instability — they are skipped automatically and do not affect valid results. See [Known Issues](../README.md#known-issues) for how to rerun individual failed trials.

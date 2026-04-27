@@ -1322,7 +1322,7 @@ class AttackManager(Node):
         if pred_box[0] is None or atk_box[0] is None: # pred_box[0] can be None when using SORT
             self.log(f"Predicted box or attack box is None at frame {self.frame_num}")
             if self.switched:
-                self.log(f"Hijacking lost at frame {self.frame_num}")
+                self.log(f"Target switch lost at frame {self.frame_num}")
                 if self.frame_num - self.switch_frame > 15:
                     self.stop_ros_node()
                 self.switched = False
@@ -1339,17 +1339,17 @@ class AttackManager(Node):
         self.log(f"Frame {self.frame_num} | IoU: {iou[0]:.2f} | IoU vic: {iou_vic[0]:.2f} | Distance to success: {self.dist_to_success:.2f} pixels | Victim confidence: {vic_w_conf}")
         if iou[0] > 0.3 and iou[0] > iou_vic[0]:  # attack box overlaps with predicted box and has higher IoU than victim box
             if not self.switched:
-                self.log(f"Hijacking successful at frame {self.frame_num}")
+                self.log(f"Target switch successful at frame {self.frame_num}")
                 self.switched = True
                 self.switch_frame = self.frame_num
                 self.start_pub_atk.publish(Bool(data=False))
             else:
                 if self.frame_num - self.switch_frame > 10:
-                    print(f"Hijacking maintained for {self.frame_num - self.switch_frame} frames, stopping simulation")
+                    print(f"Target switch maintained for {self.frame_num - self.switch_frame} frames, stopping simulation")
                     self.stop_ros_node()
             return True
         if self.switched:
-            self.log(f"Hijacking lost at frame {self.frame_num}")
+            self.log(f"Target switch lost at frame {self.frame_num}")
             if self.frame_num - self.switch_frame > 10: 
                 self.stop_ros_node()
             self.switched = False

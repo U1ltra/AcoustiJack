@@ -234,18 +234,18 @@ def draw_bounding_boxes(sim_state):
     images_to_video(images, video_output_path, fps=5)
 
 def parse_hijacking_log(log_path):
-    """Parse log.txt and return list of (start_frame, end_frame) hijacking intervals.
-    end_frame is exclusive (the frame where hijacking was lost), or inf if never lost.
+    """Parse log.txt and return list of (start_frame, end_frame) target switch intervals.
+    end_frame is exclusive (the frame where target switch was lost), or inf if never lost.
     """
     intervals = []
     start = None
     with open(log_path, 'r') as f:
         for line in f:
-            m = re.search(r'Hijacking successful at frame (\d+)', line)
+            m = re.search(r'Target switch successful at frame (\d+)', line)
             if m:
                 start = int(m.group(1))
                 continue
-            m = re.search(r'Hijacking lost at frame (\d+)', line)
+            m = re.search(r'Target switch lost at frame (\d+)', line)
             if m and start is not None:
                 intervals.append((start, int(m.group(1))))
                 start = None
@@ -391,4 +391,4 @@ if __name__ == "__main__":
             continue
         success_rate = results["success"] / results["total"] if results["total"] > 0 else 0
         dos_rate = results["dos"] / results["total"] if results["total"] > 0 else 0
-        print(f"{tracker}: Hijack rate: {success_rate:.2f}, Track loss rate: {dos_rate:.2f}")
+        print(f"{tracker}: Target switch rate: {success_rate:.2f}, Target loss rate: {dos_rate:.2f}")

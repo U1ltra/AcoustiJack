@@ -1,4 +1,4 @@
-# Acoustic Hijacking Attack on Gimbal-Stabilized Tracking Systems
+# Banshee: Target Switch Attacks on Gimbal-Stabilized Visual Tracking Systems via Acoustic Injection
 
 ## About
 Gimbal-stabilized visual tracking is widely used in autonomous systems such as UAVs. While prior work shows that acoustic signals can disturb gimbal internals, their impact on end-to-end tracking applications remains unclear. We present AcoustiJack, the first physically realizable attack that induces target switching in UAV visual tracking by exploiting acoustic vulnerabilities in gimbal-camera systems. AcoustiJack generates acoustic signals that cause directionally biased camera motion, breaking inter-frame target associations and steering the tracker toward an attacker-chosen object, leading to target switch or target loss. We achieve 93.6% success in simulation and 95.5% in real-world benchtop and in-flight experiments. Our results reveal a practical cross-domain vulnerability between acoustics and vision, highlighting the need for more robust system designs.
@@ -96,12 +96,12 @@ python utils/eval/offline_eval.py --claim 2
 
 ```
 Tracker performance summary:
-dasiam: Hijack rate: 0.90, Track loss rate: 0.10
-ucmc: Hijack rate: 0.78, Track loss rate: 0.22
+dasiam: Target switch rate: 0.90, Target loss rate: 0.10
+ucmc: Target switch rate: 0.78, Target loss rate: 0.22
 ```
 
-- **Hijack rate** — fraction of trials where the tracker successfully switched to the attacker-chosen target (the primary attack success metric, corresponding to Figure 10).
-- **Track loss rate** (DoS) — fraction of trials where tracking was lost entirely without a successful hijack. This is a secondary effect; a high value alongside a low hijack rate indicates the attack disrupts tracking but does not reliably redirect it.
+- **Target switch rate** — fraction of trials where the tracker successfully switched to the attacker-chosen target (the primary attack success metric, corresponding to Figure 10).
+- **Target loss rate** (DoS) — fraction of trials where tracking was lost entirely without a successful target switch. This is a secondary effect; a high value alongside a low target switch rate indicates the attack disrupts tracking but does not reliably redirect it.
 
 If a trial appears to be skipped (logged as `Failed to load simulation state`), it means that trial did not start correctly due to integration instability (see [Known Issues](#known-issues)). The evaluation script handles this gracefully and continues. The affected trial can be rerun with:
 
