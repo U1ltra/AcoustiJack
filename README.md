@@ -1,4 +1,29 @@
-# Banshee: Target Switch Attacks on Gimbal-Stabilized Visual Tracking Systems via Acoustic Injection
+<p align="center">
+  <h2 align="center">
+    <strong>Banshee: Target Switch Attacks on Gimbal-Stabilized Visual Tracking Systems via Acoustic Injection</strong>
+  </h2>
+</p>
+
+<p align="center">
+  <a href="https://doi.org/10.1109/SP63933.2026.00129" target="_blank">
+    <img src="https://img.shields.io/badge/Paper-%F0%9F%93%91-blue">
+  </a>
+  <a href="https://jbbrewing.github.io/banshee/" target="_blank">
+    <img src="https://img.shields.io/badge/Project-%F0%9F%94%97-lightblue">
+  </a>
+</p>
+
+<p align="center">
+  Jiarui Li<sup>1</sup>&nbsp;&nbsp;&nbsp;&nbsp;
+  Joseph Brewington<sup>1</sup>&nbsp;&nbsp;&nbsp;&nbsp;
+  Qingzhao Zhang<sup>2,*</sup>&nbsp;&nbsp;&nbsp;&nbsp;
+  Z. Morley Mao<sup>1,*</sup><br>
+  <sup>1</sup>University of Michigan&nbsp;&nbsp;&nbsp;&nbsp;
+  <sup>2</sup>The University of Arizona<br>
+  <sub>*Corresponding authors</sub>
+</p>
+
+This repository contains the code for our paper, **"Banshee: Target Switch Attacks on Gimbal-Stabilized Visual Tracking Systems via Acoustic Injection,"** published at the **2026 IEEE Symposium on Security and Privacy (S&P)**.
 
 ## About
 Gimbal-stabilized visual tracking is widely used in autonomous systems such as UAVs. While prior work shows that acoustic signals can disturb gimbal internals, their impact on end-to-end tracking applications remains unclear. We present Banshee, the first physically realizable attack that induces target switching in UAV visual tracking by exploiting acoustic vulnerabilities in gimbal-camera systems. Banshee generates acoustic signals that cause directionally biased camera motion, breaking inter-frame target associations and steering the tracker toward an attacker-chosen object, leading to target switch or target loss. We achieve 93.6% success in simulation and 95.5% in real-world benchtop and in-flight experiments. Our results reveal a practical cross-domain vulnerability between acoustics and vision, highlighting the need for more robust system designs.
@@ -137,3 +162,16 @@ We thank the following projects:
 - [gz-sim-docker](https://github.com/brean/gz-sim-docker)
 - [ultralytics](https://github.com/ultralytics/ultralytics)
 - [UCMCTrack](https://github.com/corfyi/UCMCTrack)
+
+## How to cite
+
+```
+@inproceedings{li2026banshee,
+  title={Banshee: Target Switch Attacks on Gimbal-Stabilized Visual Tracking Systems via Acoustic Injection},
+  author={Li, Jiarui and Brewington, Joseph and Zhang, Qingzhao and Mao, Z Morley},
+  booktitle={2026 IEEE Symposium on Security and Privacy (SP)},
+  pages={1539--1557},
+  year={2026},
+  organization={IEEE}
+}
+```
